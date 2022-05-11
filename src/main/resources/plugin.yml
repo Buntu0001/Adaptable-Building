@@ -1,0 +1,12 @@
+name: AdaptableBuilding
+version: '${version}'
+main: com.grradis.adaptablebuilding.AdaptableBuilding
+api-version: 1.18
+prefix: [ Adapt-Build ]
+authors: [ DataCat ]
+description: Show building through real block that can see only builder.
+commands:
+  preview:
+    description: test preview command.
+  test-preview:
+    description: test-preview command;
