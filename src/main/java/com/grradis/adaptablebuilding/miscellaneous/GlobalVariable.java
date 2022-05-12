@@ -6,4 +6,5 @@ import java.io.File;
 
 public class GlobalVariable {
     public static Plugin plugin;
+    public static File dataFolder;
 }

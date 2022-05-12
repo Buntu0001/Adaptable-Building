@@ -28,6 +28,7 @@ public class BuildingPreview {
     private EditSession lastSession;
     private Integer repeatingTask = 0;
     private Clipboard previewClipboard;
+    private Boolean passedState = false;
 
     public BuildingPreview(String schematicName, Player builder) {
         this.schematicName = schematicName;
@@ -103,7 +104,6 @@ public class BuildingPreview {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
     }
 
     private void cancelOperation() {
@@ -116,10 +116,9 @@ public class BuildingPreview {
         }
     }
 
-    // Get targeted block's location ignore building.
-    private Location getTransparentLocation() {
+    private Location getTransparentLocation() { // Get targeted block's location ignore building.
         Location loc;
-        if (lastSession != null) {
+        if (lastSession != null && passedState) {
             cancelOperation();
             loc = builder.getTargetBlock(null, 30).getLocation();
             pasteOperation();
@@ -130,12 +129,7 @@ public class BuildingPreview {
     }
 
     public void showPreview() {
-        if (lastSession != null) {
-            cancelOperation();
-            pasteOperation();
-        } else {
-            pasteOperation();
-        }
+        pasteOperation();
     }
 
     public void testPreview() {
@@ -152,13 +146,23 @@ public class BuildingPreview {
 
     public void repeatTask() {
         if (repeatingTask == 0) {
+            BuildChecker test = new BuildChecker(schematicName, builder);
             repeatingTask = Bukkit.getScheduler().scheduleSyncRepeatingTask(GlobalVariable.plugin, new Runnable() {
                 @Override
                 public void run() {
-                    if (isLocationChanged(getTransparentLocation())) {
-                        showPreview();
+                        Location loc = getTransparentLocation();
+                        if (isLocationChanged(loc)) {
+                            if (lastSession != null) {
+                                cancelOperation(); // Cancel last operation before check and paste.
+                            }
+                            if (test.testLoopAllBlock(loc)) {
+                                passedState = true;
+                                showPreview();
+                            } else {
+                                passedState = false;
+                            }
+                        }
                     }
-                }
             }, 0, 5L);
         } else {
             Bukkit.getScheduler().cancelTask(repeatingTask);

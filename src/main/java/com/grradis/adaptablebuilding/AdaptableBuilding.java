@@ -18,7 +18,8 @@ public final class AdaptableBuilding extends JavaPlugin {
         getCommand("test-preview").setExecutor(new CommandListener());
 
         GlobalVariable.plugin = this;
-        SettingManager.initSettingFile(getDataFolder()); // Initialize SettingManager class.
+        GlobalVariable.dataFolder = getDataFolder();
+        SettingManager.initSettingFile(); // Initialize SettingManager class.
 
     }
 
